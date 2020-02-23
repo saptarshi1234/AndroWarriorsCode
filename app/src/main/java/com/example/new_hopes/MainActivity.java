@@ -17,6 +17,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
@@ -191,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
                             Log.d("hell","error"+e.getMessage());
                         }
                         JSONArray jsonArray = tracks.optJSONArray("items");
-                        Log.d("hell", (jsonArray == null) + "arrray");
+                        Log.d("hell", (jsonArray == null) + "array");
                         for (int n = 0; n < jsonArray.length(); n++) {
                             try {
                                 JSONObject object = jsonArray.getJSONObject(n);
@@ -199,7 +200,21 @@ public class MainActivity extends AppCompatActivity {
                                     continue;
                                 Log.d("hell", (object == null) + " song");
                                 JSONObject track = object.getJSONObject("track");
+                                JSONObject album = object.getJSONObject("album");
+                                JSONArray images = album.optJSONArray("images");
+                                String img_url="";
+                                for (int i = 0; i < images.length(); i++) {
+                                    JSONObject image = images.getJSONObject(i);
+                                    img_url = image.optString("url").replace(null,"");
+                                    String width = image.optString("width").replace(null,"");
+                                    String height = image.optString("height").replace(null,"");
+                                    if (Integer.parseInt(width) >= 640 | Integer.parseInt(height) >= 640)
+                                        break;
+                                }
+                                Log.d("hell",img_url);
                                 Song song = gson.fromJson(track.toString(), Song.class);
+                                song.img_url = img_url;
+
                                 songs.add(song);
                             } catch (JSONException e) {
                                 e.printStackTrace();
