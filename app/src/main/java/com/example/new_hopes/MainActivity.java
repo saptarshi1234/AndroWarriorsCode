@@ -4,13 +4,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
-import android.view.Window;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -19,7 +16,6 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
-import com.example.new_hopes.R;
 import com.google.gson.Gson;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -29,8 +25,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences msharedPreferences;
     private RequestQueue queue;
     final String TAG = "hell";
-    ArrayList<String> playLists = new ArrayList<>();
+    ArrayList<PlayListNames> playListnames = new ArrayList<>();
 
 
     @Override
@@ -62,6 +56,32 @@ public class MainActivity extends AppCompatActivity {
                 editor.putString("token", response.getAccessToken());
                 Log.d(TAG, "GOT AUTH TOKEN");
                 editor.apply();
+
+                final ArrayList<PlayList> allPlaylists = new ArrayList<>();
+                setPlayListnames(new CallBack() {
+                    @Override
+                    public void OnCalledBack() {
+                        Log.d("hell",""+ playListnames.size());
+                        for(final PlayListNames pListName : playListnames){
+
+                            final ArrayList<Song> songs = new ArrayList<>();
+                            Log.d("hell",pListName.name+" getting");
+                            getSongs(songs,pListName.id, new CallBack() {
+                                @Override
+                                public void OnCalledBack() {
+                                    Log.d("hell",songs.toString());
+                                    allPlaylists.add(new PlayList(pListName,songs));
+
+                                    Log.d("hell","jnkdjj"+allPlaylists.size()+"");
+
+                                }
+                            });
+                        }
+
+                    }
+                });
+
+
 
 
 
@@ -86,57 +106,48 @@ public class MainActivity extends AppCompatActivity {
         AuthenticationRequest.Builder builder = new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
         builder.setScopes(new String[]{SCOPES});
         AuthenticationRequest request = builder.build();
+
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
+
         Log.d("hell","auth");
         AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
         Log.d("hell","auth2");
         msharedPreferences = this.getSharedPreferences("SPOTIFY", 0);
         queue = Volley.newRequestQueue(this);
 
+
+
+
     }
-    private ArrayList<String> getPlayLists(){
+    private void setPlayListnames(final CallBack callBack){
         String endpoint = "https://api.spotify.com/v1/me/playlists";
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, endpoint, null, new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         Gson gson = new Gson();
-                        Log.d("hell", response.toString());
-
-                        File sd = Environment.getExternalStorageDirectory();
-                        File dest1 = new File(sd, "song.json");
-                        FileOutputStream out;
-
-                        try {
-                            if (!dest1.exists()) {
-                                dest1.createNewFile();
-                            }
-                            out = new FileOutputStream(dest1);
-                            out.write(response.toString().getBytes());
-                            out.close();
-                            Log.d("hell", "done");
-                        } catch (Exception e) {
-                            Log.d("hell", e.getMessage().toString());
-                        }
-
+                        Log.d("hell", "response "+response.toString());
 
                         JSONArray jsonArray = response.optJSONArray("items");
                         Log.d("hell", (jsonArray == null) + "arrray");
                         for (int n = 0; n < jsonArray.length(); n++) {
                             try {
                                 JSONObject object = jsonArray.getJSONObject(n);
-                                object = object.optJSONObject("track");
                                 if (object == null)
                                     continue;
-                                Log.d("hell", (object == null) + "song");
+                                PlayListNames pList = gson.fromJson(object.toString(), PlayListNames.class);
+                                Log.d("hell", (pList == null) + " playlist");
+                                Log.d("hell",pList.name);
                                 //Log.d("hell",object.toString());
-//                                Song song = gson.fromJson(object.toString(), Song.class);
-//                                songs.add(song);
+                                playListnames.add(pList);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
 
                             }
                         }
+                        callBack.OnCalledBack();
+
 
                     }
                 }, new Response.ErrorListener() {
@@ -156,7 +167,59 @@ public class MainActivity extends AppCompatActivity {
             }
         };
         queue.add(jsonObjectRequest);
-        return playLists;
-    }
 
+    }
+    private void getSongs(final ArrayList<Song> songs, String id, final CallBack callBack) {
+        Log.d("hell","getSong");
+        String endpoint = "https://api.spotify.com/v1/playlists/" + id;
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
+                (Request.Method.GET, endpoint, null, new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Gson gson = new Gson();
+                        Log.d("hell", "response " + response.toString());
+                        JSONObject tracks = null;
+                        try {
+                            tracks = response.getJSONObject("tracks");
+                        }catch(Exception e){
+                            Log.d("hell","error"+e.getMessage());
+                        }
+                        JSONArray jsonArray = tracks.optJSONArray("items");
+                        Log.d("hell", (jsonArray == null) + "arrray");
+                        for (int n = 0; n < jsonArray.length(); n++) {
+                            try {
+                                JSONObject object = jsonArray.getJSONObject(n);
+                                if (object == null)
+                                    continue;
+                                Log.d("hell", (object == null) + " song");
+                                JSONObject track = object.getJSONObject("track");
+                                Song song = gson.fromJson(track.toString(), Song.class);
+                                songs.add(song);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+
+                            }
+                        }
+                        callBack.OnCalledBack();
+
+                    }
+                }, new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        // TODO: Handle error
+
+                    }
+                }) {
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headers = new HashMap<>();
+                String token = msharedPreferences.getString("token", "");
+                String auth = "Bearer " + token;
+                headers.put("Authorization", auth);
+                return headers;
+            }
+        };
+        queue.add(jsonObjectRequest);
+
+    }
 }
