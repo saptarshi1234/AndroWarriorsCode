@@ -1,5 +1,6 @@
 package com.example.new_hopes;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -21,17 +22,19 @@ import java.util.Map;
 
 public class CollectSongs {
     private SharedPreferences sharedPreferences;
+    private RequestQueue queue;
+    public Context mContext;
+    public ArrayList<PlayListNames> playListnames = new ArrayList<>();
+    public ArrayList<PlayList> allPlaylists = new ArrayList<>();
 
-    public CollectSongs(SharedPreferences sharedPreferences, RequestQueue queue) {
+    public CollectSongs(SharedPreferences sharedPreferences, RequestQueue queue,Context mContext) {
         this.sharedPreferences = sharedPreferences;
         this.queue = queue;
+        this.mContext = mContext;
     }
 
-    private RequestQueue queue;
-    ArrayList<PlayListNames> playListnames = new ArrayList<>();
 
     public void startGettingSongs(){
-        final ArrayList<PlayList> allPlaylists = new ArrayList<>();
         setPlayListnames(new CallBack() {
             @Override
             public void OnCalledBack() {
@@ -51,7 +54,8 @@ public class CollectSongs {
                             Log.d("hell", "jnkdjj" + allPlaylists.size() + "");
                             if(finalI ==playListnames.size()-1){
                                 Log.d("hell","all set");
-                                //call methods;;
+                                //call methods;
+                                new Downloader(mContext).YoutubeUrl("not ok");
 
                             }
                         }

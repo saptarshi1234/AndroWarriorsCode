@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
                 editor.apply();
 
 
-                CollectSongs collectSongs = new CollectSongs(msharedPreferences,queue);
+                CollectSongs collectSongs = new CollectSongs(msharedPreferences,queue,this);
                 collectSongs.startGettingSongs();
 
 

@@ -30,5 +30,6 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     implementation "com.google.code.gson:gson:2.8.5"
     implementation 'com.android.volley:volley:1.1.1'
+    implementation 'org.jsoup:jsoup:1.12.2'
 
 }
