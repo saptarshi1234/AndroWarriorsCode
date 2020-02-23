@@ -7,4 +7,8 @@ public class Downloader{
     public  static void PlaylistDownload(){
 
     }
+
+    private String YoutubeUrl(String name){
+
+    }
 }
