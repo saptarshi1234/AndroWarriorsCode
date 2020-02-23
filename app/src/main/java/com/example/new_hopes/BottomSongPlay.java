@@ -1,11 +1,13 @@
 package com.example.new_hopes;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,9 +77,24 @@ public class BottomSongPlay extends Fragment {
             @Override
             public void onClick(View v) {
                 Toast.makeText(getActivity(), "UUh Yeah", Toast.LENGTH_SHORT).show();
+                startSongPlayActivity();
             }
         });
+
+        LinearLayout ll=view.findViewById(R.id.bottomPlayLL);
+        ll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startSongPlayActivity();
+                        }
+        });
         return view;
+    }
+
+    void startSongPlayActivity(){
+
+        Intent intent = new Intent(getActivity(), SongPlay.class);
+        startActivity(intent);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
