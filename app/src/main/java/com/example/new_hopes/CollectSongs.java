@@ -140,8 +140,24 @@ public class CollectSongs {
                                 if (object == null)
                                     continue;
                                 Log.d("hell", (object == null) + " song");
+                                Song song=new Song();
                                 JSONObject track = object.getJSONObject("track");
-                                Song song = gson.fromJson(track.toString(), Song.class);
+                                song.name = track.getString("name");
+                                JSONObject album = track.getJSONObject("album");
+                                JSONArray images = album.optJSONArray("images");
+                                String img_url="";
+                                for (int i = 0; i < images.length(); i++) {
+                                    JSONObject image = images.getJSONObject(i);
+                                    img_url = image.getString("url");
+                                    String width = image.getString("width");
+                                    String height = image.getString("height");
+                                    if (Integer.parseInt(width) >= 640 | Integer.parseInt(height) >= 640)
+                                        break;
+                                }
+                                Log.d("hell",img_url);
+//                                Song song = gson.fromJson(track.toString(), Song.class);
+                                song.img_url = img_url;
+                                Log.d("hell",song.name);
                                 songs.add(song);
                             } catch (JSONException e) {
                                 e.printStackTrace();

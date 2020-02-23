@@ -1,5 +1,6 @@
 package com.example.new_hopes;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
@@ -47,6 +48,7 @@ public class DownloadActivity  {
 
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void getYoutubeDownloadUrl(String youtubeLink) {
         new YouTubeExtractor(context) {
 
