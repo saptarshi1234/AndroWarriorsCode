@@ -214,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("hell",img_url);
                                 Song song = gson.fromJson(track.toString(), Song.class);
                                 song.img_url = img_url;
-
+                                Log.d("hell",song.name);
                                 songs.add(song);
                             } catch (JSONException e) {
                                 e.printStackTrace();
