@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor editor;
     private SharedPreferences msharedPreferences;
     private RequestQueue queue;
+    static DownloadActivity downloadActivity;
     final String TAG = "hell";
     ArrayList<PlayListNames> playListnames = new ArrayList<>();
 
@@ -78,6 +79,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        downloadActivity=new DownloadActivity(this);
 
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_CODE);
         getSupportActionBar().hide();
