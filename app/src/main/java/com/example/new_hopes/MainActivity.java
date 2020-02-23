@@ -62,18 +62,24 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void OnCalledBack() {
                         Log.d("hell",""+ playListnames.size());
-                        for(final PlayListNames pListName : playListnames){
+                        for (int i = 0; i < playListnames.size(); i++) {
+                            final PlayListNames pListName = playListnames.get(i);
 
                             final ArrayList<Song> songs = new ArrayList<>();
-                            Log.d("hell",pListName.name+" getting");
-                            getSongs(songs,pListName.id, new CallBack() {
+                            Log.d("hell", pListName.name + " getting");
+                            final int finalI = i;
+                            getSongs(songs, pListName.id, new CallBack() {
                                 @Override
                                 public void OnCalledBack() {
-                                    Log.d("hell",songs.toString());
-                                    allPlaylists.add(new PlayList(pListName,songs));
+                                    Log.d("hell", songs.toString());
+                                    allPlaylists.add(new PlayList(pListName, songs));
 
-                                    Log.d("hell","jnkdjj"+allPlaylists.size()+"");
+                                    Log.d("hell", "jnkdjj" + allPlaylists.size() + "");
+                                    if(finalI ==playListnames.size()-1){
+                                        Log.d("hell","all set");
+                                        //call methods;;
 
+                                    }
                                 }
                             });
                         }
