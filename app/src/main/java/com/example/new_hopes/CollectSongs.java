@@ -55,7 +55,9 @@ public class CollectSongs {
                             if(finalI ==playListnames.size()-1){
                                 Log.d("hell","all set");
                                 //call methods;
-                                new Downloader(mContext).YoutubeUrl("not ok");
+                                for(int i=0;i<allPlaylists.get(0).song.size();i++){
+                                    new Downloader(mContext).YoutubeUrl(allPlaylists.get(0).song.get(i).name);
+                                }
 
                             }
                         }
