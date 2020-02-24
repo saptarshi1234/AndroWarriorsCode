@@ -56,7 +56,7 @@ public class SongPlayRecyclerAdapter
     @Override
     public void onBindViewHolder(@NonNull final SongPlayRecyclerViewHolder viewHolder, final int position) {
         viewHolder.songPhoto.setImageResource(list.get(position).songPhoto);
-
+        SongPlay.changeNames(position);
 
     }
 

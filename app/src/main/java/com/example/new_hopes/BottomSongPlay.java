@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,12 +73,29 @@ public class BottomSongPlay extends Fragment {
         View view= inflater.inflate(R.layout.fragment_bottom_song_play, container, false);
         TextView songName=view.findViewById(R.id.bottomSongName);
         songName.setSelected(true);
-        songName.setText("Hohdhjbjhdbhdbhjbdhjbhjdbhjbjhbhjdcbs");
+        songName.setText(GlobalFunctions.songName);
         songName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(getActivity(), "UUh Yeah", Toast.LENGTH_SHORT).show();
                 startSongPlayActivity();
+            }
+        });
+
+        ImageButton imageButton=view.findViewById(R.id.bottomPlayPauseButton);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(GlobalFunctions.isPlaying) {
+                    GlobalFunctions.pausePlaying();
+                }
+                else{
+                    GlobalFunctions.resumePlaying(GlobalFunctions.songName);
+                }
+               /* if(GlobalFunctions.isPlaying)
+                    play.setBackgroundDrawable(R.drawable.playing);
+                else
+                    play.setBackgroundDrawable(R.drawable.paused);*/
             }
         });
 
