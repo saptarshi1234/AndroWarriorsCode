@@ -2,11 +2,17 @@ package com.example.new_hopes;
 
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Environment;
 import android.util.Log;
 
 
+import java.io.BufferedReader;
+import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 import static com.example.new_hopes.BasicImageDownloader.*;
 
@@ -50,6 +56,37 @@ public class DownloadImages {
             }
         });
         downloader.download(url,false);
+    }
+
+    static Bitmap getImage(String song_name){
+        Bitmap bitmap = null;
+        try {
+
+            File directory = new File (Environment.getExternalStorageDirectory().getAbsolutePath() + "/img_data",song_name.toLowerCase());
+
+            File file = new File(directory, "image_name.jpg");
+
+
+            FileInputStream fis = new FileInputStream(file);
+            /*DataInputStream in = new DataInputStream(fis);
+            BufferedReader br =
+                    new BufferedReader(new InputStreamReader(in));
+            String strLine;
+            while ((strLine = br.readLine()) != null) {
+                myData = myData + strLine;
+
+
+            }*/
+
+            bitmap = BitmapFactory.decodeStream(fis); //This gets the image
+
+
+
+            fis.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return bitmap;
     }
 
 
