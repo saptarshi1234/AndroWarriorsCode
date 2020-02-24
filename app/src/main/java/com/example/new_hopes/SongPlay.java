@@ -231,7 +231,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
 
     void startPlaying(String song_name) throws IOException {
         try {
-            String path = getSongLoc(songName.getText().toString()) + ".mp3";
+            String path = "/storage/emulated/0"+getSongLoc(songName.getText().toString()) + ".mp3";
             Log.d(TAG, "startPlaying: hdsfjhbfj" + path);
             MediaPlayer mp = new MediaPlayer();
             mp.setDataSource(path);
