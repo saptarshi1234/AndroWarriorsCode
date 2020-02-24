@@ -55,7 +55,18 @@ public class SongPlayRecyclerAdapter
 
     @Override
     public void onBindViewHolder(@NonNull final SongPlayRecyclerViewHolder viewHolder, final int position) {
-        viewHolder.songPhoto.setImageResource(list.get(position).songPhoto);
+        //viewHolder.songPhoto.setImageResource(list.get(position).songPhoto);
+        viewHolder.songPhoto.setOnLongClickListener(
+                new View.OnLongClickListener() {
+                    @Override
+                    public boolean onLongClick(View v) {
+                        SongPlay.speak("Pausing Song");
+                        return false;
+                    }
+                }
+        );
+
+
         SongPlay.changeNames(position);
 
     }

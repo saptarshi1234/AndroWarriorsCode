@@ -64,7 +64,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/songPlayRV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
@@ -140,10 +140,13 @@
             android:gravity="center"
             android:layout_weight="1">
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@null"
+
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="fitXY"
                 android:id="@+id/shuffle"
-                android:src="@drawable/ic_action_navigation_arrow_back"/>
+                android:src="@drawable/ic_control_shuffle_01"/>
 
         </LinearLayout>
         <LinearLayout
@@ -151,32 +154,41 @@
             android:layout_height="wrap_content"
             android:layout_weight="1">
         <ImageButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:background="@null"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:scaleType="fitXY"
             android:id="@+id/backward"
             android:gravity="center"
 
-            android:src="@drawable/ic_action_navigation_arrow_back"/>
+            android:src="@drawable/ic_video_control_previous_01"/>
 
         </LinearLayout>
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:layout_width="60dp"
-            android:layout_height="60dp"
             android:id="@+id/SongPlayFabPlay"
-            android:src="@drawable/ic_action_navigation_arrow_back"/>
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:foregroundGravity="center"
+            android:layout_gravity="center"
+            android:scaleType="fitXY"
+            android:paddingLeft = "15dp"
+            android:foreground="@drawable/ic_video_control_play_01" />
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:gravity="center"
 
+
             android:layout_weight="1">
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@null"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="fitXY"
                 android:id="@+id/forward"
-                android:src="@drawable/ic_action_navigation_arrow_back"/>
+                android:src="@drawable/ic_video_control_next_01"/>
 
         </LinearLayout>
         <LinearLayout
@@ -186,10 +198,13 @@
             android:gravity="center"
             android:layout_weight="1">
             <ImageButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:background="@null"
+
+                android:layout_height="60dp"
+                android:layout_width="60dp"
+                android:scaleType="fitXY"
                 android:id="@+id/repeat"
-                android:src="@drawable/ic_action_navigation_arrow_back"/>
+                android:src="@drawable/ic_loop_03"/>
 
         </LinearLayout>
 

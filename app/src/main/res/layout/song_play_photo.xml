@@ -18,7 +18,8 @@
             android:layout_width="match_parent"
             android:id="@+id/image_song"
             android:layout_height="match_parent"
-            android:src="@drawable/ic_launcher_foreground"/>
+            android:scaleType="fitXY"
+            android:src="@drawable/cover"/>
         </LinearLayout>
 
     </androidx.cardview.widget.CardView>
