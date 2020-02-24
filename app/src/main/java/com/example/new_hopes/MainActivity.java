@@ -104,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    }
+
     private void getSongs(final ArrayList<Song> songs, String id, final CallBack callBack) {
         Log.d("hell","getSong");
         String endpoint = "https://api.spotify.com/v1/playlists/" + id;
