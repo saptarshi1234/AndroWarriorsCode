@@ -9,5 +9,7 @@ import java.io.Serializable;
 public class Song implements Serializable {
     String name;
     File imageLocation;
+    File songLocation;
+    boolean isDownloaded;
 
 }

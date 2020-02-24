@@ -63,31 +63,57 @@ public class CollectSongs {
                             if(finalI ==playListnames.size()-1){
                                 Log.d("hell","all set");
 
-                                File rootFolder = new File(Environment.getExternalStorageDirectory(),"new_hopes");
-                                if(!rootFolder.exists())
-                                    rootFolder.mkdirs();
-                                File savedPlaylistFile = new File(rootFolder,"allPlalists.ser");
-                                try {
-                                    if (!savedPlaylistFile.exists())
-                                        savedPlaylistFile.createNewFile();
-                                }catch (Exception e){
-                                    Log.d(TAG, "OnCalledBack: could not create file"+ e.getMessage());
-                                }
+//                                File rootFolder = new File(Environment.getExternalStorageDirectory(),"new_hopes");
+//                                if(!rootFolder.exists())
+//                                    rootFolder.mkdirs();
+//                                File savedPlaylistFile = new File(rootFolder,"allPlaylists.ser");
+//                                try {
+//                                    if (!savedPlaylistFile.exists())
+//                                        savedPlaylistFile.createNewFile();
+//                                }catch (Exception e){
+//                                    Log.d(TAG, "OnCalledBack: could not create file"+ e.getMessage());
+//                                }
+                                final File savedPlaylistFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                                        File.separator + "new_hopes21" + File.separator);
+
                                 Log.d(TAG, "OnCalledBack: playlist saved at"+ savedPlaylistFile.getAbsolutePath());
+                                List<PlayList> restoredPlist = null;
+                                if(savedPlaylistFile.exists())
+                                    restoredPlist = (List<PlayList>) restore_state(savedPlaylistFile);
+
                                 saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
 
 
                                 //allplaylist can be restored in any class by this static method
-                                List<PlayList> restoredPlist = (List<PlayList>) restore_state(new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/new_hopes/allPlalists.ser"));
 
+                                for (int i1 = 0; i1 < restoredPlist.size(); i1++) {
+                                    PlayList plist = restoredPlist.get(i1);
+                                    ArrayList<Song> songArrayList = plist.songs;
+                                    for (int i2 = 0; i2 < songArrayList.size(); i2++) {
+                                        Song song = songArrayList.get(i2);
+                                        try{
+                                            allPlaylists.get(i1).songs.get(i2).isDownloaded = song.isDownloaded;
+                                            allPlaylists.get(i1).songs.get(i2).songLocation = song.songLocation;
+
+                                        }catch (Exception e){
+                                            Log.d(TAG, "OnCalledBack: err merging "+e.getMessage());
+                                        }
+                                    }
+                                }
 
                                 //call methods;
                                 for(PlayList playList: allPlaylists) {
                                     Log.d(TAG, "OnCalledBack: local playList"+playList);
                                     for (int i = 0; i < playList.songs.size(); i++) {
-                                        new Downloader(mContext).YoutubeUrl(playList.songs.get(i).name);
+                                        //if(!playList.songs.get(i).isDownloaded) {
+                                            playList.songs.get(i).isDownloaded = true;
+                                            new Downloader(mContext,allPlaylists,savedPlaylistFile).YoutubeUrl(playList.songs.get(i));
+                                        //}
                                     }
                                 }
+                                CollectSongs.saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
+
+
 
                             }
                         }
@@ -200,7 +226,7 @@ public class CollectSongs {
         queue.add(jsonObjectRequest);
 
     }
-    private void saveState(File dest1,Object obj){
+    public static void saveState(File dest1,Object obj){
 //        File sd = Environment.getExternalStorageDirectory();
 //        File dest1 = new File(sd, "chat.ser");
         try {
@@ -214,7 +240,7 @@ public class CollectSongs {
         }
     }
 
-    private Object restore_state(File file){
+    private static Object restore_state(File file){
         Object obj = null;
         try {
             FileInputStream out = new FileInputStream(file);
