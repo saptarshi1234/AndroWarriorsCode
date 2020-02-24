@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Environment;
 import android.os.FileUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -104,10 +105,10 @@ public class CollectSongs {
 
                                 File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/storage/emulated/0/new_hopes21/songs1");
                                 Log.d(TAG, "OnCalledBack: here"+ f.getAbsolutePath());
-                                ArrayList<String> b = new ArrayList<>();
-                                for(File child : f.listFiles()){
-                                    b.add(child.delete()?"true":"false");
-                                }
+//                                ArrayList<String> b = new ArrayList<>();
+//                                for(File child : f.listFiles()){
+//                                    b.add(child.delete()?"true":"false");
+//                                }
 
 
                                 //call methods;
@@ -116,10 +117,12 @@ public class CollectSongs {
                                     for (int i = 0; i < playList.songs.size(); i++) {
                                        // if(!playList.songs.get(i).isDownloaded) {
                                             playList.songs.get(i).isDownloaded = true;
+                                            Toast.makeText(mContext, "downloading", Toast.LENGTH_SHORT).show();
                                             new Downloader(mContext,allPlaylists,savedPlaylistFile).YoutubeUrl(playList.songs.get(i));
                                         //}
                                     }
                                 }
+                                //Toast.makeText(mContext, "all downloaded", Toast.LENGTH_SHORT).show();
                                 CollectSongs.saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
 
 

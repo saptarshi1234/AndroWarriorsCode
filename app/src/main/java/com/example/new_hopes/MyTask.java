@@ -2,6 +2,7 @@ package com.example.new_hopes;
 
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -94,6 +95,7 @@ class MyTask extends AsyncTask<String, Boolean, Boolean> {
     protected void onPostExecute(Boolean result) {
         //Call your next task (ui thread)
         d.returnedUrl(songName);
+        Toast.makeText(d.mContext, "downloaded "+song.name, Toast.LENGTH_SHORT).show();
 
 
     }

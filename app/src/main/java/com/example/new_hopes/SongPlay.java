@@ -2,6 +2,7 @@ package com.example.new_hopes;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
@@ -43,7 +44,8 @@ import static com.example.new_hopes.GlobalFunctions.getSongPath;
 public class SongPlay extends AppCompatActivity implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
 
-    MediaPlayer mPlayer;
+    static MediaPlayer mPlayer;
+    static FloatingActionButton pause;
     static TextToSpeech textToSpeech;
     RecyclerView recyclerView;
     SongPlayRecyclerAdapter adapter;
@@ -179,22 +181,27 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
         });
 
         play=findViewById(R.id.SongPlayFabPlay);
+        pause = findViewById(R.id.SongPlayFabPause);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if(GlobalFunctions.isPlaying) {
+                play.setVisibility(View.GONE);
+                pause.setVisibility(View.VISIBLE);
+                if(mPlayer== null) {
+                    if (GlobalFunctions.isPlaying) {
 //                    t.stop();
-                    GlobalFunctions.pausePlaying();
-                }
-                else{
-                 //   t.start();
-                    try {
-                        startPlaying(getSongLoc(songName.getText().toString())+File.separator+".mp3");
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                        GlobalFunctions.pausePlaying();
+                    } else {
+                        //   t.start();
+                        try {
+                            startPlaying(getSongLoc(songName.getText().toString()) + File.separator + ".mp3");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
+                else
+                    mPlayer.start();
 
                /* if(GlobalFunctions.isPlaying)
                     play.setBackgroundDrawable(R.drawable.playing);
@@ -202,6 +209,20 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
                     play.setBackgroundDrawable(R.drawable.paused);*/
             }
         });
+        pause.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                play.setVisibility(View.VISIBLE);
+                pause.setVisibility(View.GONE);
+                mPlayer.pause();
+            }
+        });
+
+
+
+
+
 
 
     }
@@ -225,6 +246,9 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
     }
 
     static void speak(String text){
+        play.setVisibility(View.VISIBLE);
+        pause.setVisibility(View.GONE);
+        mPlayer.pause();
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 
     }
@@ -233,7 +257,13 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
         try {
             String path = "/storage/emulated/0"+getSongLoc(songName.getText().toString()) + ".mp3";
             Log.d(TAG, "startPlaying: hdsfjhbfj" + path);
-            MediaPlayer mp = new MediaPlayer();
+            mPlayer = new MediaPlayer();
+            MediaPlayer mp = mPlayer;
+            AudioManager am = (AudioManager) getApplicationContext().getSystemService(Context.AUDIO_SERVICE);
+            if(am.isMusicActive()){
+                Toast.makeText(getApplicationContext(), "already playing", Toast.LENGTH_SHORT).show();
+                return;
+            }
             mp.setDataSource(path);
 
             // mp=MediaPlayer.create(this, Uri.parse(path));
