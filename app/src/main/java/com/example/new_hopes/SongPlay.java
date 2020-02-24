@@ -9,7 +9,9 @@ import android.util.Log;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,7 +35,7 @@ import java.util.Objects;
 public class SongPlay extends AppCompatActivity implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
 
-    TextToSpeech textToSpeech;
+    static TextToSpeech textToSpeech;
     RecyclerView recyclerView;
     SongPlayRecyclerAdapter adapter;
     List<SongPlayData> list = new ArrayList<>();
@@ -83,6 +85,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
         repeat=findViewById(R.id.repeat);
 
         final ProgressBar seekbar=findViewById(R.id.SongPlayProgressBar);
+
 
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
@@ -139,7 +142,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
                     GlobalFunctions.pausePlaying();
                 }
                 else{
-                    t.start();
+                  //  t.start();
                     GlobalFunctions.resumePlaying(songName.getText().toString());}
                /* if(GlobalFunctions.isPlaying)
                     play.setBackgroundDrawable(R.drawable.playing);
@@ -148,7 +151,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
             }
         });
 
-        
+
     }
 
     static void changeNames(int i){/*
@@ -169,7 +172,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
 
     }
 
-    void speak(String text){
+    static void speak(String text){
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 
     }
@@ -181,6 +184,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
 
     @Override
     public boolean onDoubleTap(MotionEvent e) {
+        Log.d(TAG, "onDoubleTap: I was called");
         Toast.makeText(this, "double tap working", Toast.LENGTH_SHORT).show();
         play.performClick();
         speak("hi");
@@ -230,3 +234,119 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
         super.onPause();
     }
 }
+/*
+public class SongPlay extends AppCompatActivity {
+    private static final String TAG = "SongPlay";
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.content_song_play);
+
+        @SuppressLint("WrongViewCast")
+        Button button = findViewById(R.id.forward);
+        button.setOnTouchListener(new OnSwipeTouchListener(this) {
+            public void onSwipeTop() {
+                Toast.makeText(getApplicationContext(), "Swiped top", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onSwipeRight() {
+                Toast.makeText(getApplicationContext(), "Swiped right", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onSwipeLeft() {
+                Toast.makeText(getApplicationContext(), "Swiped left", Toast.LENGTH_SHORT).show();
+            }
+
+            public void onSwipeBottom() {
+                Toast.makeText(getApplicationContext(), "Swiped bottom", Toast.LENGTH_SHORT).show();
+            }
+
+        });
+    }
+
+    class OnSwipeTouchListener implements View.OnTouchListener {
+
+        private final GestureDetector gestureDetector;
+
+        public OnSwipeTouchListener(Context ctx) {
+            gestureDetector = new GestureDetector(ctx, new GestureListener());
+        }
+
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            return gestureDetector.onTouchEvent(event);
+        }
+
+        private final class GestureListener extends GestureDetector.SimpleOnGestureListener {
+
+            private static final int SWIPE_THRESHOLD = 300;
+            private static final int SWIPE_VELOCITY_THRESHOLD = 300;
+
+            @Override
+            public boolean onDown(MotionEvent e) {
+                return true;
+            }
+
+            @Override
+            public boolean onSingleTapConfirmed(MotionEvent e) {
+                Log.i("TAG", "onSingleTapConfirmed:");
+                Toast.makeText(getApplicationContext(), "Single Tap Detected", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            @Override
+            public void onLongPress(MotionEvent e) {
+                Log.i("TAG", "onLongPress:");
+                Toast.makeText(getApplicationContext(), "Long Press Detected", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                Toast.makeText(getApplicationContext(), "Double Tap Detected", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+
+            @Override
+            public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+                boolean result = false;
+                try {
+                    float diffY = e2.getY() - e1.getY();
+                    float diffX = e2.getX() - e1.getX();
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        if (Math.abs(diffX) > SWIPE_THRESHOLD && Math.abs(velocityX) > SWIPE_VELOCITY_THRESHOLD) {
+                            if (diffX > 0) {
+                                onSwipeRight();
+                            } else {
+                                onSwipeLeft();
+                            }
+                            result = true;
+                        }
+                    } else if (Math.abs(diffY) > SWIPE_THRESHOLD && Math.abs(velocityY) > SWIPE_VELOCITY_THRESHOLD) {
+                        if (diffY > 0) {
+                            onSwipeBottom();
+                        } else {
+                            onSwipeTop();
+                        }
+                        result = true;
+                    }
+                } catch (Exception exception) {
+                    exception.printStackTrace();
+                }
+                return result;
+            }
+        }
+
+        public void onSwipeRight() {
+        }
+
+        public void onSwipeLeft() {
+        }
+
+        public void onSwipeTop() {
+        }
+
+        public void onSwipeBottom() {
+        }
+    }
+}*/
