@@ -159,7 +159,8 @@ public class DownloadActivity  {
 //            songStorageFolder.mkdirs();
         final File songStorageFolder = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
                 File.separator + "new_hopes21" + File.separator + "songs1");
-        request.setDestinationInExternalPublicDir(songStorageFolder.getAbsolutePath(), fileName);
+        fileName=song.name;
+        request.setDestinationInExternalPublicDir(songStorageFolder.getAbsolutePath(), fileName+".mp3");
         song.songLocation = songStorageFolder;
         CollectSongs.saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
 

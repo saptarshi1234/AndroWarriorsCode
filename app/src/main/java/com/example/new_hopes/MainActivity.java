@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -96,6 +98,9 @@ public class MainActivity extends AppCompatActivity implements SongsFrag.OnFragm
         Toolbar toolbar = findViewById(R.id.toolbar_main);
         setSupportActionBar(toolbar);
 
+        ArrayList<String> song_names=getPlayLists();
+        String[] array=song_names.toArray(new String[0]);
+
 
         downloadActivity=new DownloadActivity(this);
 
@@ -115,6 +120,8 @@ public class MainActivity extends AppCompatActivity implements SongsFrag.OnFragm
 
 
 
+
+
         viewPager =  findViewById(R.id.view_pager);
         tabLayout =  findViewById(R.id.tab_layout);
         adapter = new TabAdapter(getSupportFragmentManager());
@@ -126,11 +133,25 @@ public class MainActivity extends AppCompatActivity implements SongsFrag.OnFragm
         tabLayout.setupWithViewPager(viewPager);
 
 
-        list = new String[]{"Clipcodes", "Android Tutorials", "Youtube Clipcodes Tutorials", "SearchView Clicodes", "Android Clipcodes", "Tutorials Clipcodes"};
+        list =array;  // new String[]{"Clipcodes", "Android Tutorials", "Youtube Clipcodes Tutorials", "SearchView Clicodes", "Android Clipcodes", "Tutorials Clipcodes"};
         searchViewCode();
 
 
 
+    }
+
+    ArrayList<String> getPlayLists()
+    {
+        ArrayList<String> names=new ArrayList<String>();
+try{            File file=new File(Environment.getExternalStorageDirectory().getAbsolutePath() +File.separator +"new_hopes21"+File.separator);
+        ArrayList<PlayList> xyz=(ArrayList<PlayList>) CollectSongs.restore_state(file);
+        for (PlayList playList : xyz){
+            for(Song song: playList.songs){
+                names.add(song.name);
+            }
+        }}catch (Exception e){}
+
+        return names;
     }
 
     @Override

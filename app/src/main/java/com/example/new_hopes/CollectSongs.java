@@ -105,7 +105,7 @@ public class CollectSongs {
                                 for(PlayList playList: allPlaylists) {
                                     Log.d(TAG, "OnCalledBack: local playList"+playList);
                                     for (int i = 0; i < playList.songs.size(); i++) {
-                                        //if(!playList.songs.get(i).isDownloaded) {
+                                       // if(!playList.songs.get(i).isDownloaded) {
                                             playList.songs.get(i).isDownloaded = true;
                                             new Downloader(mContext,allPlaylists,savedPlaylistFile).YoutubeUrl(playList.songs.get(i));
                                         //}
@@ -254,7 +254,7 @@ public class CollectSongs {
         }
     }
 
-    private static Object restore_state(File file){
+    public static Object restore_state(File file){
         Object obj = null;
         try {
             FileInputStream out = new FileInputStream(file);
