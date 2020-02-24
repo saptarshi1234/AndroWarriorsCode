@@ -34,17 +34,17 @@ We planned to implement the following features -:
 
 - [ ] Basic Music Player Functionality
   
-  - [x] List the contents of the users' playlists in our app
-  - [x] List the songs of the user in each playlist
+  - [x] List the contents of the users' playlists in our app {Done Partially}
+  - [x] List the songs of the user in each playlist {Done Partially}
   - [ ] Segregate the songs Artist wise
   - [ ] Play, Pause, Next, Previous, Shuffle, Loop features etc.
 - [ ] Features for Visually Impaired
   - [ ] Gesture Detection
-  - [ ] Text to Speech
+  - [x] Text to Speech {Done Partially}
   - [ ] Voice assistant
  - [ ] Downloadability 
-    - [ ] Download the required songs in MP3 format
-    - [x] Download the entire playlist
+    - [x] Download the required songs in MP3 format {Done Partially}
+    - [x] Download the entire playlist {Done Partially}
   
  We have implemented the ticked features successfully and the unticked ones are in development phase.
  
