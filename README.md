@@ -14,6 +14,7 @@ The app provides the following features
 
 # Usage
 
+Download the apk app-debug.apk from the repository and install it using the package installer on android. With this you are ready to go to sync your playlists with spotify!!
 
 
 # Acknowledgements
@@ -34,19 +35,20 @@ We planned to implement the following features -:
 
 - [ ] Basic Music Player Functionality
   
-  - [x] List the contents of the users' playlists in our app {Done Partially}
-  - [x] List the songs of the user in each playlist {Done Partially}
+  - [x] List the contents of the users' playlists in our app 
+  - [x] List the songs of the user in each playlist 
   - [ ] Segregate the songs Artist wise
   - [ ] Play, Pause, Next, Previous, Shuffle, Loop features etc.
+  - [ ] Add Song Name to the bottom bar displayed in the app.
 - [ ] Features for Visually Impaired
   - [ ] Gesture Detection
-  - [x] Text to Speech {Done Partially}
+  - [x] Text to Speech 
   - [ ] Voice assistant
  - [ ] Downloadability 
-    - [x] Download the required songs in MP3 format {Done Partially}
-    - [x] Download the entire playlist {Done Partially}
+    - [x] Download the required songs in MP3 format
+    - [x] Download the entire playlist 
   
- We have implemented the ticked features successfully and the unticked ones are in development phase.
+ We have implemented the ticked features **partially** and the unticked ones are in development phase.
  
  
 # Developers
