@@ -10,6 +10,8 @@ The app provides the following features
 - Voice commands to automate basic operations in the app.
 - Manage your Spotify music categorized by artists and corresponding playlists.
 
+
+
 # Usage
 
 
@@ -25,6 +27,28 @@ This app acknowledges the contributions of the developers of the following witho
 - Google Speech Engine
 - An online catalogue for downloading MP3 music
 
+
+# Development Phase
+
+We planned to implement the following features -: 
+
+- [ ] Basic Music Player Functionality
+  
+  - [x] List the contents of the users' playlists in our app
+  - [x] List the songs of the user in each playlist
+  - [ ] Segregate the songs Artist wise
+  - [ ] Play, Pause, Next, Previous, Shuffle, Loop features etc.
+- [ ] Features for Visually Impaired
+  - [ ] Gesture Detection
+  - [ ] Text to Speech
+  - [ ] Voice assistant
+ - [ ] Downloadability 
+    - [ ] Download the required songs in MP3 format
+    - [x] Download the entire playlist
+  
+ We have implemented the ticked features successfully and the unticked ones are in development phase.
+ 
+ 
 # Developers
 
 - Pranjal Aggarwal
