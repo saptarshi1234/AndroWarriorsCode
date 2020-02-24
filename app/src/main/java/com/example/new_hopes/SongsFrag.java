@@ -3,6 +3,7 @@ package com.example.new_hopes;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -71,6 +73,21 @@ public class SongsFrag extends Fragment {
         }
     }
 
+    ArrayList<String> getPlayLists()
+    {
+    ArrayList<String> names=new ArrayList<String>();
+        try {
+
+        File file=new File(Environment.getExternalStorageDirectory().getAbsolutePath() +File.separator +"new_hopes21"+File.separator);
+        ArrayList<PlayList> xyz=(ArrayList<PlayList>) CollectSongs.restore_state(file);
+        for (PlayList playList : xyz){
+            for(Song song: playList.songs){
+                names.add(song.name);
+            }
+        }}catch(Exception e){}
+        return names;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,9 +96,19 @@ public class SongsFrag extends Fragment {
 
         List<SongsListData> list = new ArrayList<>();
 
-        list.add(new SongsListData("Homicide","Eminem",R.drawable.ic_launcher_background));
-        list.add(new SongsListData("Venom","Eminem",R.drawable.ic_launcher_background));
-        list.add(new SongsListData("Rap God","Eminem",R.drawable.ic_launcher_foreground));
+        //list.add(new SongsListData("Homicide","Eminem",R.drawable.ic_launcher_background));
+        //list.add(new SongsListData("Venom","Eminem",R.drawable.ic_launcher_background));
+        //list.add(new SongsListData("Rap God","Eminem",R.drawable.ic_launcher_foreground));
+
+
+
+        ArrayList<String> song_names=getPlayLists();
+        String[] array=song_names.toArray(new String[0]);
+
+        for (int i=0;i<array.length;i++)
+        {
+            list.add(new SongsListData(array[i],"",R.drawable.ic_launcher_foreground));
+        }
 
 
         recyclerView

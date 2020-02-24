@@ -2,6 +2,7 @@ package com.example.new_hopes;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -16,11 +17,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CollectSongs {
+    private static final String TAG = "hell";
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
     public Context mContext;
@@ -54,10 +62,58 @@ public class CollectSongs {
                             Log.d("hell", "jnkdjj" + allPlaylists.size() + "");
                             if(finalI ==playListnames.size()-1){
                                 Log.d("hell","all set");
-                                //call methods;
-                                for(int i=0;i<allPlaylists.get(0).song.size();i++){
-                                    new Downloader(mContext).YoutubeUrl(allPlaylists.get(0).song.get(i).name);
+
+//                                File rootFolder = new File(Environment.getExternalStorageDirectory(),"new_hopes");
+//                                if(!rootFolder.exists())
+//                                    rootFolder.mkdirs();
+//                                File savedPlaylistFile = new File(rootFolder,"allPlaylists.ser");
+//                                try {
+//                                    if (!savedPlaylistFile.exists())
+//                                        savedPlaylistFile.createNewFile();
+//                                }catch (Exception e){
+//                                    Log.d(TAG, "OnCalledBack: could not create file"+ e.getMessage());
+//                                }
+                                final File savedPlaylistFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                                        File.separator + "new_hopes21" + File.separator);
+
+                                Log.d(TAG, "OnCalledBack: playlist saved at"+ savedPlaylistFile.getAbsolutePath());
+                                List<PlayList> restoredPlist = null;
+                                if(savedPlaylistFile.exists())
+                                    restoredPlist = (List<PlayList>) restore_state(savedPlaylistFile);
+
+                                saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
+
+
+                                //allplaylist can be restored in any class by this static method
+
+                                for (int i1 = 0; i1 < restoredPlist.size(); i1++) {
+                                    PlayList plist = restoredPlist.get(i1);
+                                    ArrayList<Song> songArrayList = plist.songs;
+                                    for (int i2 = 0; i2 < songArrayList.size(); i2++) {
+                                        Song song = songArrayList.get(i2);
+                                        try{
+                                            allPlaylists.get(i1).songs.get(i2).isDownloaded = song.isDownloaded;
+                                            allPlaylists.get(i1).songs.get(i2).songLocation = song.songLocation;
+
+                                        }catch (Exception e){
+                                            Log.d(TAG, "OnCalledBack: err merging "+e.getMessage());
+                                        }
+                                    }
                                 }
+
+                                //call methods;
+                                for(PlayList playList: allPlaylists) {
+                                    Log.d(TAG, "OnCalledBack: local playList"+playList);
+                                    for (int i = 0; i < playList.songs.size(); i++) {
+                                       // if(!playList.songs.get(i).isDownloaded) {
+                                            playList.songs.get(i).isDownloaded = true;
+                                            new Downloader(mContext,allPlaylists,savedPlaylistFile).YoutubeUrl(playList.songs.get(i));
+                                        //}
+                                    }
+                                }
+                                CollectSongs.saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
+
+
 
                             }
                         }
@@ -139,10 +195,8 @@ public class CollectSongs {
                                 JSONObject object = jsonArray.getJSONObject(n);
                                 if (object == null)
                                     continue;
-                                Log.d("hell", (object == null) + " song");
-                                Song song=new Song();
+                                Log.d("hell", (object == null) + " songs");
                                 JSONObject track = object.getJSONObject("track");
-                                song.name = track.getString("name");
                                 JSONObject album = track.getJSONObject("album");
                                 JSONArray images = album.optJSONArray("images");
                                 String img_url="";
@@ -155,11 +209,9 @@ public class CollectSongs {
                                         break;
                                 }
                                 Log.d("hell",img_url);
-//                                Song song = gson.fromJson(track.toString(), Song.class);
-                                song.img_url = img_url;
+                                Song song = gson.fromJson(track.toString(), Song.class);
                                 Log.d("hell",song.name);
                                 songs.add(song);
-                                DownloadImages.download_image(song.name,song.img_url);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -186,6 +238,35 @@ public class CollectSongs {
             }
         };
         queue.add(jsonObjectRequest);
+
+    }
+    public static void saveState(File dest1,Object obj){
+//        File sd = Environment.getExternalStorageDirectory();
+//        File dest1 = new File(sd, "chat.ser");
+        try {
+            FileOutputStream out = new FileOutputStream(dest1);
+            ObjectOutputStream objOut = new ObjectOutputStream(out);
+            objOut.writeObject(obj);
+            out.close();
+
+        } catch (Exception e) {
+            Log.d(TAG, "saveState: could not save object : "+e.getMessage());
+        }
+    }
+
+    public static Object restore_state(File file){
+        Object obj = null;
+        try {
+            FileInputStream out = new FileInputStream(file);
+            ObjectInputStream objOut = new ObjectInputStream(out);
+            obj = objOut.readObject();
+            Log.d(TAG,"found object"+obj.getClass());
+            out.close();
+
+        } catch (Exception e) {
+            Log.d(TAG, "restore_state: could not read object : "+e.getMessage());
+        }
+        return obj;
 
     }
 }

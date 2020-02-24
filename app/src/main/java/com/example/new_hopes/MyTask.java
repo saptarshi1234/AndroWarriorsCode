@@ -8,18 +8,27 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 
 class MyTask extends AsyncTask<String, Boolean, Boolean> {
     String songName,link;
+    Song song;
     Downloader d;
     public final String TAG ="hell";
+    ArrayList<PlayList> allPlaylists ;
+    File savedPlaylistFile;
 
 
-    public MyTask(Downloader d,String songName) {
+
+    public MyTask(Downloader d,Song song,ArrayList<PlayList> allPlaylists ,File savedPlaylistFile) {
         super();
         this.d = d;
-        this.songName = songName;
+        this.song = song;
+        songName = song.name;
+        this.allPlaylists = allPlaylists;
+        this.savedPlaylistFile = savedPlaylistFile;
     }
 
     @Override
@@ -73,7 +82,7 @@ class MyTask extends AsyncTask<String, Boolean, Boolean> {
         Log.d(TAG, "doInBackground: occ are"+counter);
         Log.d(TAG, "doInBackground: ans is "+ans);
         String song_url=ans;
-        MainActivity.downloadActivity.startDownloading(song_url);
+        MainActivity.downloadActivity.startDownloading(song_url,song,allPlaylists,savedPlaylistFile);
         //Log.d("hell", "doInBackground: "+links.size());
 
 

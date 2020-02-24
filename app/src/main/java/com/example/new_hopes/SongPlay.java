@@ -2,7 +2,10 @@ package com.example.new_hopes;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -27,14 +30,20 @@ import androidx.recyclerview.widget.SnapHelper;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import static com.example.new_hopes.GlobalFunctions.getSongPath;
+
 public class SongPlay extends AppCompatActivity implements GestureDetector.OnGestureListener,
         GestureDetector.OnDoubleTapListener {
 
+    MediaPlayer mPlayer;
     static TextToSpeech textToSpeech;
     RecyclerView recyclerView;
     SongPlayRecyclerAdapter adapter;
@@ -51,6 +60,42 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
 
     private static final String TAG = "SongPlay";
 
+    void generateSongData(List<String[]> abc){
+        ArrayList<String> song_names=getPlayLists();
+        String[] array=song_names.toArray(new String[0]);
+
+        for (int i=0;i<array.length;i++)
+        {
+            String temp[]={array[0],array[0],getSongLoc(array[0])};
+            abc.add(temp);
+        }
+    }
+
+
+    ArrayList<String> getPlayLists()
+    {
+        ArrayList<String> names=new ArrayList<String>();
+        File file=new File(Environment.getExternalStorageDirectory().getAbsolutePath() +File.separator +"new_hopes21"+File.separator);
+        ArrayList<PlayList> xyz=(ArrayList<PlayList>) CollectSongs.restore_state(file);
+        for (PlayList playList : xyz){
+            for(Song song: playList.songs){
+                names.add(song.name);
+            }
+        }
+
+        return names;
+    }
+
+    String getSongLoc(String name)
+    {
+        final File savedPlaylistFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() +
+                File.separator + "new_hopes21" + File.separator+"songs1"+File.separator+name);
+        return savedPlaylistFile.getAbsolutePath();
+
+
+
+
+    }
 
 
     @Override
@@ -65,6 +110,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
 
         list.add(new SongPlayData(R.drawable.eminem));
         list.add(new SongPlayData(R.drawable.ic_action_voice_search));
+        generateSongData(songsInfo);
 
         recyclerView
                 = findViewById(
@@ -90,7 +136,7 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
         final Handler handler = new Handler();
         Runnable runnable = new Runnable() {
             public void run() {
-                while (GlobalFunctions.mPlayer.isPlaying()) {
+                while (mPlayer.isPlaying()) {
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
@@ -98,10 +144,10 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
                     }
                     handler.post(new Runnable() {
                         public void run() {
-                            seekbar.setMax(GlobalFunctions.mPlayer.getDuration() / 1000);
-                            time_el1.setText(getDurationString(GlobalFunctions.mPlayer
+                            seekbar.setMax(mPlayer.getDuration() / 1000);
+                            time_el1.setText(getDurationString(mPlayer
                                     .getCurrentPosition() / 1000));
-                            seekbar.setProgress(GlobalFunctions.mPlayer
+                            seekbar.setProgress(mPlayer
                                     .getCurrentPosition() / 1000);
                         }
                     });
@@ -138,12 +184,18 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
             public void onClick(View v) {
 
                 if(GlobalFunctions.isPlaying) {
-                    t.stop();
+//                    t.stop();
                     GlobalFunctions.pausePlaying();
                 }
                 else{
-                  //  t.start();
-                    GlobalFunctions.resumePlaying(songName.getText().toString());}
+                 //   t.start();
+                    try {
+                        startPlaying(getSongLoc(songName.getText().toString())+File.separator+".mp3");
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
                /* if(GlobalFunctions.isPlaying)
                     play.setBackgroundDrawable(R.drawable.playing);
                 else
@@ -154,11 +206,11 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
 
     }
 
-    static void changeNames(int i){/*
+    static void changeNames(int i){
         songName.setText(songsInfo.get(i)[0]);
         songArtist.setText(songsInfo.get(i)[1]);
         time_el1.setText("0:00");
-        time_tot.setText(songsInfo.get(i)[2]);*/
+        time_tot.setText(songsInfo.get(i)[2]);
 
     }
 
@@ -174,6 +226,43 @@ public class SongPlay extends AppCompatActivity implements GestureDetector.OnGes
 
     static void speak(String text){
         textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+
+    }
+
+    void startPlaying(String song_name) throws IOException {
+        try {
+            String path = getSongLoc(songName.getText().toString()) + ".mp3";
+            Log.d(TAG, "startPlaying: hdsfjhbfj" + path);
+            MediaPlayer mp = new MediaPlayer();
+            mp.setDataSource(path);
+
+            // mp=MediaPlayer.create(this, Uri.parse(path));
+            mp.prepareAsync();
+
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
+        }catch (Exception e){}
+
+        /*Toast.makeText(this, "path is"+path, Toast.LENGTH_SHORT).show();
+        try {
+            mPlayer.setDataSource(path);
+            mPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                }
+            });
+            mPlayer.prepareAsync();
+
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }*/
 
     }
 
