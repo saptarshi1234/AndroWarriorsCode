@@ -4,7 +4,10 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -24,10 +27,13 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
-public class SongPlay extends AppCompatActivity {
+public class SongPlay extends AppCompatActivity implements GestureDetector.OnGestureListener,
+        GestureDetector.OnDoubleTapListener {
 
+    TextToSpeech textToSpeech;
     RecyclerView recyclerView;
     SongPlayRecyclerAdapter adapter;
     List<SongPlayData> list = new ArrayList<>();
@@ -38,7 +44,8 @@ public class SongPlay extends AppCompatActivity {
     @SuppressLint("StaticFieldLeak")
     static ImageButton forward,backward,repeat,shuffle;
 
-    FloatingActionButton play;
+    static FloatingActionButton play;
+    GestureDetector gestureDetector;
 
     private static final String TAG = "SongPlay";
 
@@ -51,6 +58,8 @@ public class SongPlay extends AppCompatActivity {
         /*Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 */
+
+        gestureDetector = new GestureDetector(SongPlay.this, SongPlay.this);
 
         list.add(new SongPlayData(R.drawable.eminem));
         list.add(new SongPlayData(R.drawable.ic_action_voice_search));
@@ -111,6 +120,15 @@ public class SongPlay extends AppCompatActivity {
             }
         });
 
+        textToSpeech=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    textToSpeech.setLanguage(Locale.UK);
+                }
+            }
+        });
+
         play=findViewById(R.id.SongPlayFabPlay);
         play.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,11 +151,11 @@ public class SongPlay extends AppCompatActivity {
         
     }
 
-    static void changeNames(int i){
+    static void changeNames(int i){/*
         songName.setText(songsInfo.get(i)[0]);
         songArtist.setText(songsInfo.get(i)[1]);
         time_el1.setText("0:00");
-        time_tot.setText(songsInfo.get(i)[2]);
+        time_tot.setText(songsInfo.get(i)[2]);*/
 
     }
 
@@ -151,6 +169,64 @@ public class SongPlay extends AppCompatActivity {
 
     }
 
+    void speak(String text){
+        textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
 
+    }
 
+    @Override
+    public boolean onSingleTapConfirmed(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTap(MotionEvent e) {
+        Toast.makeText(this, "double tap working", Toast.LENGTH_SHORT).show();
+        play.performClick();
+        speak("hi");
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onDown(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent e) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent e) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+        return false;
+    }
+
+    public void onPause(){
+        if(textToSpeech !=null){
+            textToSpeech.stop();
+            textToSpeech.shutdown();
+        }
+        super.onPause();
+    }
 }
