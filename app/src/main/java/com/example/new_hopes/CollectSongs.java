@@ -1,5 +1,6 @@
 package com.example.new_hopes;
 
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
@@ -21,17 +22,19 @@ import java.util.Map;
 
 public class CollectSongs {
     private SharedPreferences sharedPreferences;
+    private RequestQueue queue;
+    public Context mContext;
+    public ArrayList<PlayListNames> playListnames = new ArrayList<>();
+    public ArrayList<PlayList> allPlaylists = new ArrayList<>();
 
-    public CollectSongs(SharedPreferences sharedPreferences, RequestQueue queue) {
+    public CollectSongs(SharedPreferences sharedPreferences, RequestQueue queue,Context mContext) {
         this.sharedPreferences = sharedPreferences;
         this.queue = queue;
+        this.mContext = mContext;
     }
 
-    private RequestQueue queue;
-    ArrayList<PlayListNames> playListnames = new ArrayList<>();
 
     public void startGettingSongs(){
-        final ArrayList<PlayList> allPlaylists = new ArrayList<>();
         setPlayListnames(new CallBack() {
             @Override
             public void OnCalledBack() {
@@ -51,7 +54,10 @@ public class CollectSongs {
                             Log.d("hell", "jnkdjj" + allPlaylists.size() + "");
                             if(finalI ==playListnames.size()-1){
                                 Log.d("hell","all set");
-                                //call methods;;
+                                //call methods;
+                                for(int i=0;i<allPlaylists.get(0).song.size();i++){
+                                    new Downloader(mContext).YoutubeUrl(allPlaylists.get(0).song.get(i).name);
+                                }
 
                             }
                         }
@@ -134,9 +140,27 @@ public class CollectSongs {
                                 if (object == null)
                                     continue;
                                 Log.d("hell", (object == null) + " song");
+                                Song song=new Song();
                                 JSONObject track = object.getJSONObject("track");
-                                Song song = gson.fromJson(track.toString(), Song.class);
+                                song.name = track.getString("name");
+                                JSONObject album = track.getJSONObject("album");
+                                JSONArray images = album.optJSONArray("images");
+                                String img_url="";
+                                for (int i = 0; i < images.length(); i++) {
+                                    JSONObject image = images.getJSONObject(i);
+                                    img_url = image.getString("url");
+                                    String width = image.getString("width");
+                                    String height = image.getString("height");
+                                    if (Integer.parseInt(width) >= 640 | Integer.parseInt(height) >= 640)
+                                        break;
+                                }
+                                Log.d("hell",img_url);
+//                                Song song = gson.fromJson(track.toString(), Song.class);
+                                song.img_url = img_url;
+                                Log.d("hell",song.name);
                                 songs.add(song);
+                                DownloadImages.download_image(song.name,song.img_url);
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
 
