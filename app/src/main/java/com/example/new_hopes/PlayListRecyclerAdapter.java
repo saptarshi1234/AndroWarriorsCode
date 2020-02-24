@@ -41,7 +41,7 @@ public class PlayListRecyclerAdapter
 
         View photoView
                 = inflater
-                .inflate(R.layout.song_play_photo,
+                .inflate(R.layout.playlist_header_layout,
                         parent, false);
 
         PlayListRecyclerViewHolder viewHolder

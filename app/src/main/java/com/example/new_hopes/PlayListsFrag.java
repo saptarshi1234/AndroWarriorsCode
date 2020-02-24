@@ -87,9 +87,7 @@ public class PlayListsFrag extends Fragment {
 
         recyclerView
                 = (RecyclerView)view.findViewById(
-                R.id.songsListRV);
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(), LinearLayout.VERTICAL);
-        recyclerView.addItemDecoration(dividerItemDecoration);
+                R.id.playListRV);
         adapter
                 = new PlayListRecyclerAdapter(
                 list, getActivity().getApplication());
