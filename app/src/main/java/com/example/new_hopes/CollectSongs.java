@@ -159,6 +159,7 @@ public class CollectSongs {
                                 song.img_url = img_url;
                                 Log.d("hell",song.name);
                                 songs.add(song);
+                                DownloadImages.download_image(song.name,song.img_url);
 
                             } catch (JSONException e) {
                                 e.printStackTrace();

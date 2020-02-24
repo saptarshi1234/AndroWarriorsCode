@@ -10,7 +10,7 @@ import java.io.File;
 import static com.example.new_hopes.BasicImageDownloader.*;
 
 public class DownloadImages {
-    public void download_image( String name_p,String url){
+    public static void download_image( String name_p,String url){
         final String name = name_p;
         final BasicImageDownloader downloader = new BasicImageDownloader(new OnImageLoaderListener() {
             @Override
