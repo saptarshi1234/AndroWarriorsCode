@@ -73,7 +73,8 @@ class MyTask extends AsyncTask<String, Boolean, Boolean> {
         Log.d(TAG, "doInBackground: occ are"+counter);
         Log.d(TAG, "doInBackground: ans is "+ans);
         String song_url=ans;
-        MainActivity.downloadActivity.startDownloading(song_url);
+        MainActivity.downloadActivity.startDownloading(song_url,songName);
+        Log.d("hell2", "doInBackground: to download "+ songName);
         //Log.d("hell", "doInBackground: "+links.size());
 
 

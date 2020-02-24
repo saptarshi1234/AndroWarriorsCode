@@ -1,5 +1,6 @@
 package com.example.new_hopes;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Context;
@@ -34,20 +35,23 @@ public class DownloadActivity  {
 
     private List<YtFragmentedVideo> formatsToShowList;
 
+
     DownloadActivity(Context context){
         this.context=context;
     }
 
-    void startDownloading(String url)
+    void startDownloading(String url,String songName)
     {
         if (url.equals(""))
             return;
         // We have a valid link
-        getYoutubeDownloadUrl(url);
+        Log.d(TAG, "startDownloading: NOW songname"+songName);
+        getYoutubeDownloadUrl(url,songName);
 
     }
 
-    private void getYoutubeDownloadUrl(String youtubeLink) {
+    @SuppressLint("StaticFieldLeak")
+    private void getYoutubeDownloadUrl(String youtubeLink, final String songName) {
         new YouTubeExtractor(context) {
 
             @Override
@@ -72,7 +76,7 @@ public class DownloadActivity  {
                 });
                 for (YtFragmentedVideo files : formatsToShowList) {
 
-                    addButtonToMainLayout(vMeta.getTitle(), files);
+                    addButtonToMainLayout(vMeta.getTitle(), files,songName);
                 }
             }
         }.extract(youtubeLink, true, false);
@@ -104,7 +108,7 @@ public class DownloadActivity  {
     }
 
 
-    private void addButtonToMainLayout(final String videoTitle, final YtFragmentedVideo ytFrVideo) {
+    private void addButtonToMainLayout(final String videoTitle, final YtFragmentedVideo ytFrVideo,String songName) {
         // Display some buttons and let the user choose the format
         if (ytFrVideo.height != -1)
             return;
@@ -121,19 +125,19 @@ public class DownloadActivity  {
         boolean hideAudioDownloadNotification = false;
         if (ytFrVideo.videoFile != null) {
             downloadIds += downloadFromUrl(ytFrVideo.videoFile.getUrl(), videoTitle,
-                    filename + "." + ytFrVideo.videoFile.getFormat().getExt(), false);
+                    filename + "." + ytFrVideo.videoFile.getFormat().getExt(), false,songName);
             downloadIds += "-";
             hideAudioDownloadNotification = true;
         }
         if (ytFrVideo.audioFile != null) {
             downloadIds += downloadFromUrl(ytFrVideo.audioFile.getUrl(), videoTitle,
-                    filename + "." + ytFrVideo.audioFile.getFormat().getExt(), hideAudioDownloadNotification);
+                    filename + "." + ytFrVideo.audioFile.getFormat().getExt(), hideAudioDownloadNotification,songName);
         }
         if (ytFrVideo.audioFile != null)
             cacheDownloadIds(downloadIds);
     }
 
-    private long downloadFromUrl(String youtubeDlUrl, String downloadTitle, String fileName, boolean hide) {
+    private long downloadFromUrl(String youtubeDlUrl, String downloadTitle, String fileName, boolean hide,String songName) {
         Log.d(TAG, "downloadFromUrl: "+youtubeDlUrl);
         Log.d(TAG, "downloadFromUrl: title"+downloadTitle);
         Uri uri = Uri.parse(youtubeDlUrl);
@@ -146,11 +150,13 @@ public class DownloadActivity  {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
 
-        File rootFolder = new File(Environment.getExternalStorageDirectory(),"new_hopes");
+        File rootFolder = new File(Environment.DIRECTORY_DCIM,"new_hopes2");
         File songStorageFolder  = new File(rootFolder,"songs");
         if(!songStorageFolder.exists())
             songStorageFolder.mkdirs();
-        request.setDestinationInExternalPublicDir(songStorageFolder.getAbsolutePath(), fileName);
+        Log.d(TAG, "downloadFromUrl: TO save as "+ songName);
+        fileName=songName;
+        request.setDestinationInExternalPublicDir(songStorageFolder.getAbsolutePath(), songName);
 
 
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);

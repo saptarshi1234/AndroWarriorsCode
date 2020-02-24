@@ -63,10 +63,10 @@ public class CollectSongs {
                             if(finalI ==playListnames.size()-1){
                                 Log.d("hell","all set");
 
-                                File rootFolder = new File(Environment.getExternalStorageDirectory(),"new_hopes");
+                                File rootFolder = new File(Environment.DIRECTORY_DCIM,"new_hopes2");
                                 if(!rootFolder.exists())
                                     rootFolder.mkdirs();
-                                File savedPlaylistFile = new File(rootFolder,"allPlalists.ser");
+                                File savedPlaylistFile = new File(rootFolder,"allPlaylists1.ser");
                                 try {
                                     if (!savedPlaylistFile.exists())
                                         savedPlaylistFile.createNewFile();
@@ -74,18 +74,44 @@ public class CollectSongs {
                                     Log.d(TAG, "OnCalledBack: could not create file"+ e.getMessage());
                                 }
                                 Log.d(TAG, "OnCalledBack: playlist saved at"+ savedPlaylistFile.getAbsolutePath());
-                                saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
+                                ArrayList<PlayList> restoredPlist = (ArrayList<PlayList>) restore_state(savedPlaylistFile);
+                                //allPlaylists = restoredPlist;
+
+//                                for (int i1 = 0; i1 < restoredPlist.size(); i1++) {
+//                                    PlayList plist = restoredPlist.get(i1);
+//                                    ArrayList<Song> songArrayList = plist.songs;
+//                                    for (int i2 = 0; i2 < songArrayList.size(); i2++) {
+//                                        Song song = songArrayList.get(i2);
+//                                        allPlaylists.get(i1).songs.get(i2).isDownloaded=song.isDownloaded;
+//                                    }
+//                                }
+                                saveState(savedPlaylistFile,allPlaylists);
 
 
                                 //allplaylist can be restored in any class by this static method
-                                List<PlayList> restoredPlist = (List<PlayList>) restore_state(new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/new_hopes/allPlalists.ser"));
+                                //List<PlayList> restoredPlist = (List<PlayList>) restore_state(new File(Environment.DIRECTORY_DOWNLOADS+"/new_hopes2/allPlalists.ser"));
 
 
                                 //call methods;
                                 for(PlayList playList: allPlaylists) {
                                     Log.d(TAG, "OnCalledBack: local playList"+playList);
                                     for (int i = 0; i < playList.songs.size(); i++) {
-                                        new Downloader(mContext).YoutubeUrl(playList.songs.get(i).name);
+                                        File songFolder = new File(rootFolder+"/songs");
+                                        boolean toDownLoad = true;
+                                        String[] files = null;
+                                        try {
+                                            files = mContext.getAssets().list(songFolder.getAbsolutePath());
+                                        }catch (Exception e){
+                                            Log.d(TAG, "OnCalledBack: could not read folder : "+e.getMessage());
+                                        }
+//                                        for(String fileName: files){
+//                                            if(fileName.startsWith(playList.songs.get(i).name))
+//                                                toDownLoad = false;
+//
+//                                        }
+                                        if(!playList.songs.get(i).isDownloaded)
+                                            playList.songs.get(i).isDownloaded = true;
+                                            new Downloader(mContext).YoutubeUrl(playList.songs.get(i).name);
                                     }
                                 }
 
@@ -172,6 +198,7 @@ public class CollectSongs {
                                 Log.d("hell", (object == null) + " songs");
                                 JSONObject track = object.getJSONObject("track");
                                 Song song = gson.fromJson(track.toString(), Song.class);
+                                song.isDownloaded = false;
                                 songs.add(song);
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -200,11 +227,9 @@ public class CollectSongs {
         queue.add(jsonObjectRequest);
 
     }
-    private void saveState(File dest1,Object obj){
-//        File sd = Environment.getExternalStorageDirectory();
-//        File dest1 = new File(sd, "chat.ser");
+    private void saveState(File file,Object obj){
         try {
-            FileOutputStream out = new FileOutputStream(dest1);
+            FileOutputStream out = new FileOutputStream(file);
             ObjectOutputStream objOut = new ObjectOutputStream(out);
             objOut.writeObject(obj);
             out.close();
