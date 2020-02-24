@@ -145,7 +145,13 @@ public class DownloadActivity  {
         } else
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+
+        File rootFolder = new File(Environment.getExternalStorageDirectory(),"new_hopes");
+        File songStorageFolder  = new File(rootFolder,"songs");
+        if(!songStorageFolder.exists())
+            songStorageFolder.mkdirs();
+        request.setDestinationInExternalPublicDir(songStorageFolder.getAbsolutePath(), fileName);
+
 
         DownloadManager manager = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         return manager.enqueue(request);

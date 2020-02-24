@@ -2,6 +2,7 @@ package com.example.new_hopes;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Environment;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -16,11 +17,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class CollectSongs {
+    private static final String TAG = "hell";
     private SharedPreferences sharedPreferences;
     private RequestQueue queue;
     public Context mContext;
@@ -54,9 +62,31 @@ public class CollectSongs {
                             Log.d("hell", "jnkdjj" + allPlaylists.size() + "");
                             if(finalI ==playListnames.size()-1){
                                 Log.d("hell","all set");
+
+                                File rootFolder = new File(Environment.getExternalStorageDirectory(),"new_hopes");
+                                if(!rootFolder.exists())
+                                    rootFolder.mkdirs();
+                                File savedPlaylistFile = new File(rootFolder,"allPlalists.ser");
+                                try {
+                                    if (!savedPlaylistFile.exists())
+                                        savedPlaylistFile.createNewFile();
+                                }catch (Exception e){
+                                    Log.d(TAG, "OnCalledBack: could not create file"+ e.getMessage());
+                                }
+                                Log.d(TAG, "OnCalledBack: playlist saved at"+ savedPlaylistFile.getAbsolutePath());
+                                saveState(savedPlaylistFile.getAbsoluteFile(),allPlaylists);
+
+
+                                //allplaylist can be restored in any class by this static method
+                                List<PlayList> restoredPlist = (List<PlayList>) restore_state(new File(Environment.getExternalStorageDirectory().getAbsoluteFile()+"/new_hopes/allPlalists.ser"));
+
+
                                 //call methods;
-                                for(int i=0;i<allPlaylists.get(0).song.size();i++){
-                                    new Downloader(mContext).YoutubeUrl(allPlaylists.get(0).song.get(i).name);
+                                for(PlayList playList: allPlaylists) {
+                                    Log.d(TAG, "OnCalledBack: local playList"+playList);
+                                    for (int i = 0; i < playList.songs.size(); i++) {
+                                        new Downloader(mContext).YoutubeUrl(playList.songs.get(i).name);
+                                    }
                                 }
 
                             }
@@ -139,7 +169,7 @@ public class CollectSongs {
                                 JSONObject object = jsonArray.getJSONObject(n);
                                 if (object == null)
                                     continue;
-                                Log.d("hell", (object == null) + " song");
+                                Log.d("hell", (object == null) + " songs");
                                 JSONObject track = object.getJSONObject("track");
                                 Song song = gson.fromJson(track.toString(), Song.class);
                                 songs.add(song);
@@ -168,6 +198,35 @@ public class CollectSongs {
             }
         };
         queue.add(jsonObjectRequest);
+
+    }
+    private void saveState(File dest1,Object obj){
+//        File sd = Environment.getExternalStorageDirectory();
+//        File dest1 = new File(sd, "chat.ser");
+        try {
+            FileOutputStream out = new FileOutputStream(dest1);
+            ObjectOutputStream objOut = new ObjectOutputStream(out);
+            objOut.writeObject(obj);
+            out.close();
+
+        } catch (Exception e) {
+            Log.d(TAG, "saveState: could not save object : "+e.getMessage());
+        }
+    }
+
+    private Object restore_state(File file){
+        Object obj = null;
+        try {
+            FileInputStream out = new FileInputStream(file);
+            ObjectInputStream objOut = new ObjectInputStream(out);
+            obj = objOut.readObject();
+            Log.d(TAG,"found object"+obj.getClass());
+            out.close();
+
+        } catch (Exception e) {
+            Log.d(TAG, "restore_state: could not read object : "+e.getMessage());
+        }
+        return obj;
 
     }
 }
