@@ -3,6 +3,7 @@ package com.example.new_hopes;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
+import android.os.FileUtils;
 import android.util.Log;
 
 import com.android.volley.AuthFailureError;
@@ -100,6 +101,14 @@ public class CollectSongs {
                                         }
                                     }
                                 }
+
+                                File f = new File(Environment.getExternalStorageDirectory().getAbsolutePath()+"/storage/emulated/0/new_hopes21/songs1");
+                                Log.d(TAG, "OnCalledBack: here"+ f.getAbsolutePath());
+                                ArrayList<String> b = new ArrayList<>();
+                                for(File child : f.listFiles()){
+                                    b.add(child.delete()?"true":"false");
+                                }
+
 
                                 //call methods;
                                 for(PlayList playList: allPlaylists) {

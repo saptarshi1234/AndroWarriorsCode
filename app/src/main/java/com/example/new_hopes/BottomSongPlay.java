@@ -73,7 +73,6 @@ public class BottomSongPlay extends Fragment {
         View view= inflater.inflate(R.layout.fragment_bottom_song_play, container, false);
         TextView songName=view.findViewById(R.id.bottomSongName);
         songName.setSelected(true);
-        songName.setText(GlobalFunctions.songName);
         songName.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
